@@ -14,13 +14,19 @@ data "aws_ami" "app_ami" {
   owners = ["979382823631"] # Bitnami
 }
 
+data "aws_vpc" "default" {
+  default = true
+}
+
 resource "aws_instance" "blog" {
-  ami           = data.aws_ami.app_ami.id
-  instance_type = var.instance_type
+  ami                    = data.aws_ami.app_ami.id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.blog.id]
 
   tags = {
-    Name = "HelloWorld"
+    Name = "Learning Terraform"
   }
+}
 
 resource "aws_security_group" "blog" {
   name = "blog"
@@ -58,3 +64,4 @@ resource "aws_security_group_rule" "blog_everything_out" {
   cidr_blocks = ["0.0.0.0/0"]
   security_group_id = aws_security_group.blog.id
 }
+
